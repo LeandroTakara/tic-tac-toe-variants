@@ -6,9 +6,10 @@
         <span class="logo-part2">Variants #</span>
       </div>
 
-      <nav class="game-variants">
-        <ul>
+      <nav>
+        <ul class="game-variants">
           <li class="game-variant-item"><a class="game-variant-link" href="/">Classic</a></li>
+          <li class="game-variant-item"><a class="game-variant-link" href="/infinite">Infinite</a></li>
         </ul>
       </nav>
     </div>
@@ -55,6 +56,11 @@
   }
   .logo-part2::first-letter {
     font-size: 1.7em;
+  }
+
+  .game-variants {
+    display: flex;
+    column-gap: 20px;
   }
 
   .game-variant-item {

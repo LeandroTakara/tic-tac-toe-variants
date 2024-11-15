@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed } from 'vue'
+  import { ref, computed, watch, reactive } from 'vue'
 
   import RestartButton from '@/components/RestartButton.vue'
 
@@ -36,6 +36,16 @@
     else if (gameState.value === GAME_STATES.DRAW) return 'Draw'
   })
 
+  const MAX_PLAY_LENGTH = 6
+  const lastPlays = reactive([])
+
+  // marks the element to be removed, it is the oldest element
+  watch(lastPlays, () => {
+    if (lastPlays.length === MAX_PLAY_LENGTH) {
+      lastPlays[0].classList.add('to-be-removed')
+    }
+  })
+
   function clickTile(e) {
     // game ended
     if (gameState.value != GAME_STATES.PLAYING) return
@@ -44,6 +54,13 @@
     if (hasPlayerMark(e.target)) return
 
     e.target.classList.add(currentPlayer.value)
+
+    if (lastPlays.length === MAX_PLAY_LENGTH) {
+      const el = lastPlays.shift()
+      el.className = 'square'
+    }
+
+    lastPlays.push(e.target)
 
     gameState.value = checkWinner()
 
@@ -87,7 +104,7 @@
     <span class="player-icon" :class="currentPlayerIcon"></span>
     <span class="player-name">Player {{ isPlayer1Turn ? '1' : '2' }}</span>
   </div>
-  
+
   <div class="game-area">
     <div class="game" ref="game">
       <div class="square" v-for="i in 9" @click="clickTile"></div>
@@ -169,6 +186,10 @@
   .square.p2 {
     --radius: 45px;
     --width: 10px;
+  }
+
+  .to-be-removed {
+    opacity: 0.3;
   }
 
   .game-result-container {
