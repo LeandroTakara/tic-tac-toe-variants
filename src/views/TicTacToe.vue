@@ -22,7 +22,7 @@
   }
 
   const game = ref(null)
-  let gameState = GAME_STATES.PLAYING
+  const gameState = ref(GAME_STATES.PLAYING)
   const isPlayer1Turn = ref(true)
 
   const currentPlayerIcon = computed(() => ({
@@ -31,21 +31,21 @@
   }))
   const currentPlayer = computed(() => isPlayer1Turn.value ? 'p1' : 'p2')
   const gameResultMessage = computed(() => {
-    if (gameState === GAME_STATES.PLAYER1_WIN) return 'Player 1 win'
-    else if (gameState === GAME_STATES.PLAYER2_WIN) return 'Player 2 win'
-    else if (gameState === GAME_STATES.DRAW) return 'Draw'
+    if (gameState.value === GAME_STATES.PLAYER1_WIN) return 'Player 1 win'
+    else if (gameState.value === GAME_STATES.PLAYER2_WIN) return 'Player 2 win'
+    else if (gameState.value === GAME_STATES.DRAW) return 'Draw'
   })
 
   function clickTile(e) {
     // game ended
-    if (gameState != GAME_STATES.PLAYING) return
+    if (gameState.value != GAME_STATES.PLAYING) return
 
     // square has already been chosen
     if (hasPlayerMark(e.target)) return
 
     e.target.classList.add(currentPlayer.value)
 
-    gameState = checkWinner()
+    gameState.value = checkWinner()
 
     isPlayer1Turn.value = !isPlayer1Turn.value
   }
@@ -73,7 +73,7 @@
   }
 
   function restartGame() {
-    gameState = GAME_STATES.PLAYING
+    gameState.value = GAME_STATES.PLAYING
     isPlayer1Turn.value = true
 
     for (const square of game.value.children) {
@@ -94,11 +94,13 @@
         <div class="square" v-for="i in 9" @click="clickTile"></div>
       </div>
 
-      <div class="game-result-container" v-if="gameState != GAME_STATES.PLAYING">
-        <span class="game-result">{{ gameResultMessage }}</span>
+      <Transition name="scale-result">
+        <div class="game-result-container" v-if="gameState != GAME_STATES.PLAYING">
+          <span class="game-result">{{ gameResultMessage }}</span>
 
-        <RestartButton @click="restartGame" />
-      </div>
+          <RestartButton @click="restartGame" />
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -107,6 +109,7 @@
   .game-container {
     margin: 20px auto 0;
     width: min-content;
+    font-family: "Chewy", system-ui;
   }
 
   .game-info {
@@ -119,7 +122,8 @@
     padding: 10px;
     margin: 0 auto 30px;
     border-radius: 10px;
-    background-color: rgb(61, 50, 76)
+    background-color: rgb(61, 50, 76);
+    box-shadow: 5px 5px 0px 0px #0000005c, inset -4px -4px 20px 0px #0000005c;
   }
 
   .player-icon {
@@ -139,6 +143,7 @@
   .player-name {
     font-size: 1.5rem;
     color: white;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.4)
   }
 
   .game-area {
@@ -157,9 +162,10 @@
     background-color: rgba(213, 213, 213, 0.5);
     border-radius: 15px;
     cursor: pointer;
+    box-shadow: 5px 5px 0px 0px #0000005c, inset -4px -4px 20px 0px #0000005c;
   }
   .square:hover {
-    background-color: rgba(238, 238, 238, 0.8);
+    background-color: rgba(238, 238, 238, 0.7);
   }
   .square.p1 {
     --height: 70px;
@@ -180,15 +186,17 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 200px;
-    height: 150px;
+    width: 110%;
+    height: 110%;
     border-radius: 10px;
+    border: solid black 3px;
     background-color: rgba(74, 48, 93, 0.8);
   }
 
   .game-result {
-    font-size: 1.4rem;
+    font-size: 3rem;
     color: white;
+    text-shadow: 0 0 25px rgba(255, 255, 255, 0.4)
   }
 
   /* icons */
@@ -202,6 +210,7 @@
     left: 50%;
     transform: translate(-50%, -50%) rotateZ(45deg);
     background: red;
+    box-shadow: 0 0 30px 1px rgba(255, 0, 0, 0.4);
   }
   .p1::after {
     content: '';
@@ -213,6 +222,7 @@
     left: 50%;
     transform: translate(-50%, -50%) rotateZ(-45deg);
     background: red;
+    box-shadow: 0 0 30px 1px rgba(255, 0, 0, 0.4);
   }
   .p2::before {
     content: '';
@@ -224,5 +234,16 @@
     border-radius: 100%;
     border: solid var(--width) blue;
     transform: translate(-50%, -50%);
+    box-shadow: 0 0 30px 1px rgba(0, 0, 255, 0.4), inset 0 0 30px 1px rgba(0, 0, 255, 0.4);
+  }
+
+  .scale-result-enter-active, .scale-result-leave-active {
+    transition-property: transform, opacity;
+    transition-duration: 0.7s;
+  }
+
+  .scale-result-enter-from, .scale-result-leave-to {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
   }
 </style>

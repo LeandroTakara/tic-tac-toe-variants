@@ -27,6 +27,14 @@
     height: 20px;
     border: solid var(--arrow-color) 3px;
     border-radius: 100%;
+    transition: transform 0.5s;
+  }
+
+  .restart-button:hover {
+    box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.2);
+  }
+  .icon:hover {
+    transform: translate(-50%, -50%) rotateZ(-390deg);
   }
 
   .icon::before {
