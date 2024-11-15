@@ -10,6 +10,7 @@
         <ul class="game-variants">
           <li class="game-variant-item"><a class="game-variant-link" href="/">Classic</a></li>
           <li class="game-variant-item"><a class="game-variant-link" href="/infinite">Infinite</a></li>
+          <li class="game-variant-item"><a class="game-variant-link" href="/super">Super</a></li>
         </ul>
       </nav>
     </div>
@@ -20,7 +21,7 @@
   .main-header {
     height: 70px;
     padding-inline: 30px;
-    background-color: rgb(62, 50, 83);
+    background-color: var(--main-color2);
     font-family: "Poppins", sans-serif;
     box-shadow: 0px 0 12px 6px rgba(0, 0, 0, 0.1);
   }
