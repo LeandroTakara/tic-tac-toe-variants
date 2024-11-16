@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, watch, reactive, defineEmits } from 'vue'
+  import { ref, computed, defineEmits } from 'vue'
 
   import RestartButton from '@/components/RestartButton.vue'
 
@@ -21,17 +21,21 @@
     PLAYING: 3,
   }
 
+  const SYMBOLS = {
+    P1: 0,
+    P2: 1,
+    EMPTY: 2,
+  }
+
   const emit = defineEmits(['isPlayer1Turn'])
 
-  const game = ref(null)
+  const game = ref(new Array(9).fill(SYMBOLS.EMPTY))
   const gameState = ref(GAME_STATES.PLAYING)
+
   const isPlayer1Turn = ref(true)
 
-  const currentPlayerIcon = computed(() => ({
-    p1: isPlayer1Turn.value,
-    p2: !isPlayer1Turn.value,
-  }))
-  const currentPlayer = computed(() => isPlayer1Turn.value ? 'p1' : 'p2')
+  const currentPlayer = computed(() => isPlayer1Turn.value ? SYMBOLS.P1 : SYMBOLS.P2)
+
   const gameResultMessage = computed(() => {
     if (gameState.value === GAME_STATES.PLAYER1_WIN) return 'Player 1 win'
     else if (gameState.value === GAME_STATES.PLAYER2_WIN) return 'Player 2 win'
@@ -39,68 +43,61 @@
   })
 
   const MAX_PLAY_LENGTH = 6
-  const lastPlays = reactive([])
+  const lastPlays = ref([])
+  const elementToBeRemoved = ref(-1)
 
-  // marks the element to be removed, it is the oldest element
-  watch(lastPlays, () => {
-    if (lastPlays.length === MAX_PLAY_LENGTH) {
-      lastPlays[0].classList.add('to-be-removed')
-    }
-  })
-
-  function clickTile(e) {
+  function clickSquare(square) {
     // game ended
-    if (gameState.value != GAME_STATES.PLAYING) return
+    if (gameState.value !== GAME_STATES.PLAYING) return
 
-    // square has already been chosen
-    if (hasPlayerMark(e.target)) return
+    // square has already an symbol
+    if (game.value[square] !== SYMBOLS.EMPTY) return
 
-    e.target.classList.add(currentPlayer.value)
-
-    if (lastPlays.length === MAX_PLAY_LENGTH) {
-      const el = lastPlays.shift()
-      el.className = 'square'
+    if (elementToBeRemoved.value !== -1) {
+      const elRemoved = lastPlays.value.shift()
+      game.value[elRemoved] = SYMBOLS.EMPTY
     }
 
-    lastPlays.push(e.target)
+    game.value[square] = currentPlayer.value
+    lastPlays.value.push(square)
+
+    if (lastPlays.value.length === MAX_PLAY_LENGTH) {
+      elementToBeRemoved.value = lastPlays.value[0]
+    }
 
     gameState.value = checkWinner()
+
+    // game ended, don't change the game variables
+    if (gameState.value !== GAME_STATES.PLAYING) return
 
     isPlayer1Turn.value = !isPlayer1Turn.value
 
     emit('isPlayer1Turn', isPlayer1Turn.value)
   }
 
-  function hasPlayerMark(element) {
-    return element.classList.contains('p1') || element.classList.contains('p2')
-  }
-
   function checkWinner() {
-    const squares = Array.from(game.value.children)
-
     for (const [a, b, c] of WINNINGS) {
       if (
-        squares[a].classList.contains(currentPlayer.value) &&
-        squares[b].classList.contains(currentPlayer.value) &&
-        squares[c].classList.contains(currentPlayer.value)
+        game.value[a] === currentPlayer.value &&
+        game.value[b] === currentPlayer.value &&
+        game.value[c] === currentPlayer.value
       ) {
-        return currentPlayer.value == 'p1' ? GAME_STATES.PLAYER1_WIN : GAME_STATES.PLAYER2_WIN
+        return currentPlayer.value == SYMBOLS.P1 ? GAME_STATES.PLAYER1_WIN : GAME_STATES.PLAYER2_WIN
       }
     }
 
-    if (squares.every(hasPlayerMark)) return GAME_STATES.DRAW
+    if (game.value.every(square => square !== SYMBOLS.EMPTY)) return GAME_STATES.DRAW
 
     return GAME_STATES.PLAYING
   }
 
   function restartGame() {
+    game.value = game.value.fill(SYMBOLS.EMPTY)
     gameState.value = GAME_STATES.PLAYING
     isPlayer1Turn.value = true
-    lastPlays.length = 0
-
-    for (const square of game.value.children) {
-      square.className = 'square'
-    }
+    lastPlays.value = []
+    elementToBeRemoved.value = -1
+    emit('isPlayer1Turn', isPlayer1Turn.value)
   }
 
   emit('isPlayer1Turn', isPlayer1Turn.value)
@@ -108,8 +105,17 @@
 
 <template>
   <div class="game-area">
-    <div class="game" ref="game">
-      <div class="square" v-for="i in 9" @click="clickTile"></div>
+    <div class="game">
+      <div
+        class="square"
+        :class="{
+          p1: game[i - 1] === SYMBOLS.P1,
+          p2: game[i - 1] === SYMBOLS.P2,
+          'to-be-removed': i - 1 === elementToBeRemoved
+        }"
+        @click="() => clickSquare(i - 1)"
+        v-for="i in 9"
+      ></div>
     </div>
 
     <Transition name="scale-result">

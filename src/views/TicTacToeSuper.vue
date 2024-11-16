@@ -73,6 +73,9 @@
     // checks the big game winner
     gameState.value = checkWinner(game.value)
 
+    // game ended, don't change the game variables
+    if (gameState.value !== GAME_STATES.PLAYING) return
+
     // sets in which sub-game to play next
     activeSubGame.value = subGamesResults.value[square] !== GAME_STATES.PLAYING ? -1 : square
 
@@ -104,6 +107,7 @@
     gameState.value = GAME_STATES.PLAYING
     isPlayer1Turn.value = true
     activeSubGame.value = -1
+    emit('isPlayer1Turn', isPlayer1Turn.value)
   }
 
   emit('isPlayer1Turn', isPlayer1Turn.value)
