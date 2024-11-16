@@ -1,19 +1,36 @@
+<script setup>
+  import { defineEmits } from 'vue'
+
+  const emit = defineEmits(['openHowToPlay'])
+
+  function openHowToPlay() {
+    emit('openHowToPlay')
+  }
+</script>
+
 <template>
   <header class="main-header">
     <div class="header-max">
-      <div class="logo">
-        <span class="logo-part1">TicTacToe</span>
-        <span class="logo-part2">Variants #</span>
-        <span class="game-name">{{ $route.name }}</span>
-      </div>
+      <div class="main-content">
+        <h1    class="logo">
+          <span class="logo-part1">TicTacToe</span>
+          <span class="logo-part2">Variants #</span>
+          <span class="game-name">{{ $route.name }}</span>
+        </h1  >
 
-      <nav>
-        <ul class="game-variants">
-          <li class="game-variant-item"><a class="game-variant-link" href="/">Classic</a></li>
-          <li class="game-variant-item"><a class="game-variant-link" href="/infinite">Infinite</a></li>
-          <li class="game-variant-item"><a class="game-variant-link" href="/super">Super</a></li>
-        </ul>
-      </nav>
+        <nav>
+          <ul class="game-variants">
+            <li class="game-variant-item"><a class="game-variant-link" href="/">Classic</a></li>
+            <li class="game-variant-item"><a class="game-variant-link" href="/infinite">Infinite</a></li>
+            <li class="game-variant-item"><a class="game-variant-link" href="/super">Super</a></li>
+          </ul>
+        </nav>
+      </div>
+      <div class="bottom-content">
+        <button class="howToPlayButton" @click="openHowToPlay">
+          <img src="@/assets/question_mark.png" alt="How to play">
+        </button>
+      </div>
     </div>
   </header>
 </template>
@@ -28,12 +45,16 @@
   }
 
   .header-max {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     max-width: 900px;
     height: inherit;
     margin: 0 auto;
+  }
+
+  .main-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: inherit;
   }
 
   .logo {
@@ -87,5 +108,25 @@
   }
   .game-variant-link:hover {
     text-shadow: 0 0 4px white;
+  }
+
+  .bottom-content {
+    margin-top: 10px;
+  }
+
+  .howToPlayButton {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 25px;
+    width: 25px;
+    background-color: var(--main-color2);
+    border-radius: 100%;
+    cursor: pointer;
+  }
+
+  .howToPlayButton img {
+    height: 60%;
+    width: 60%;
   }
 </style>

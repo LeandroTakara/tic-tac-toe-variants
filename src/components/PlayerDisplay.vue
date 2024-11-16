@@ -47,6 +47,7 @@
   }
 
   .player-name {
+    width: 85px;
     color: white;
     font-size: 1.5rem;
     text-shadow: 0 0 25px var(--white-shadow);
