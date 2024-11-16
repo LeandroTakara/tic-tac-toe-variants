@@ -4,6 +4,7 @@
       <div class="logo">
         <span class="logo-part1">TicTacToe</span>
         <span class="logo-part2">Variants #</span>
+        <span class="game-name">{{ $route.name }}</span>
       </div>
 
       <nav>
@@ -57,6 +58,18 @@
   }
   .logo-part2::first-letter {
     font-size: 1.7em;
+  }
+
+  .game-name {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    left: 4.5em;
+    color: white;
+    font-size: 1.5em;
+  }
+  .game-name::first-letter {
+    text-transform: capitalize;
   }
 
   .game-variants {

@@ -8,14 +8,17 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'classic',
       component: TicTacToe,
     },
     {
       path: '/infinite',
+      name: 'infinite',
       component: TicTacToeInfinite,
     },
     {
       path: '/super',
+      name: 'super',
       component: TicTacToeSuper,
     },
   ],
