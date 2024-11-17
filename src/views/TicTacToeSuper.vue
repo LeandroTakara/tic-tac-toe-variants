@@ -1,6 +1,5 @@
 <script setup>
-import RestartButton from '@/components/RestartButton.vue'
-import PlayerDisplay from '@/components/PlayerDisplay.vue'
+import Game from '@/components/Game.vue'
 import HowToPlay from '@/components/HowToPlay.vue'
 import { useTicTacToeSuper } from '@/composables/tictactoe'
 import { isHowToPlayMenuOpened } from '@/stores/howToPlayMenu'
@@ -9,11 +8,8 @@ const { GAME_STATES, SYMBOLS, gameState, subGames, subGamesResults, activeSubGam
 </script>
 
 <template>
-  <PlayerDisplay :isPlayer1Turn="isPlayer1Turn" />
-
-  <div class="game-area">
-    <div class="game">
-      <div
+  <Game :isPlaying="gameState != GAME_STATES.PLAYING" :gameResultMessage :isPlayer1Turn :resetGame>
+    <div
         class="sub-game"
         :class="{
           disabled: subGamesResults[i - 1] !== GAME_STATES.PLAYING || (activeSubGame !== -1 && i - 1 !== activeSubGame)
@@ -37,14 +33,7 @@ const { GAME_STATES, SYMBOLS, gameState, subGames, subGamesResults, activeSubGam
           @click="() => clickSquare(i - 1, j - 1)"
         ></div>
       </div>
-    </div>
-    <Transition name="scale-result">
-      <div class="game-result-container" v-if="gameState != GAME_STATES.PLAYING">
-        <span class="game-result">{{ gameResultMessage }}</span>
-        <RestartButton @click="resetGame" />
-      </div>
-    </Transition>
-  </div>
+  </Game>
   <HowToPlay v-if="isHowToPlayMenuOpened">
     <p>The rules are the same as the tic tac toe, except for these ones:</p>
     <ul>
@@ -58,18 +47,12 @@ const { GAME_STATES, SYMBOLS, gameState, subGames, subGamesResults, activeSubGam
 </template>
 
 <style scoped>
-.game {
-  grid-template-columns: repeat(3, 120px);
-  grid-template-rows: repeat(3, 120px);
-  gap: 30px;
-}
-
 .sub-game {
   position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(3, 1fr);
-  gap: 10px;
+  gap: 7px;
 }
 
 .sub-game-result {
@@ -103,6 +86,18 @@ const { GAME_STATES, SYMBOLS, gameState, subGames, subGamesResults, activeSubGam
   background-color: var(--square-color);
   opacity: 0.5;
   cursor: auto;
+}
+.square {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background-color: var(--square-color);
+  cursor: pointer;
+  box-shadow: 5px 5px 0 0 var(--black-shadow), inset -4px -4px 20px 0 var(--black-shadow);
+}
+.square:hover {
+  background-color: var(--square-color-hover);
 }
 .square.p1 {
   --height: 25px;
