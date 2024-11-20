@@ -3,8 +3,13 @@ A project that contains some tic tac toe variants to play (and the normal versio
 
 It was made for fun and to test my knowledge of Vue.
 
+[Play here](https://tic-tac-toe-variants.vercel.app/)
+
 ## Built with
-<img src="https://img.shields.io/badge/Vue%20js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D" />
+<div>
+  <img src="https://img.shields.io/badge/Vue%20js-35495E?style=for-the-badge&logo=vuedotjs&logoColor=4FC08D"/>
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white"/>
+</div>
 
 ## Getting Started
 1. Clone the repository
